@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        DOCKER_IMAGE = "vishwanthtalluri/demo-app"
+        DOCKER_IMAGE = "RasoolaiahC/demo-app"
     }
 
     stages {
@@ -15,7 +15,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/Vishwanth-Talluri/demo.git'
+                    url: 'https://github.com/Rasoolaiah-C/demo2.git'
             }
         }
 
@@ -26,7 +26,7 @@ pipeline {
         }
         stage('Docker Build') {
     steps {
-        sh 'docker build -t vishwanthtalluri/demo-app .'
+        sh 'docker build -t RasoolaiahC/demo-app .'
     }
 }
 
@@ -37,7 +37,7 @@ pipeline {
                 sh 'docker rm -f demo-app || true'
                 
                 // Start new container
-                sh 'docker run -d --name demo-app -p 8080:8080 $DOCKER_IMAGE'
+                sh 'docker run -d --name demo-app -p 8081:8081 $DOCKER_IMAGE'
             }
         }
     }
