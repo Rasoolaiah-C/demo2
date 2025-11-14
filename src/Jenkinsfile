@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+
+    tools {
+        jdk 'jdk21'
+        maven 'maven-3.9'
+    }
+
+    environment {
+        DOCKER_IMAGE = "vishwanthtalluri/demo-app"
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/Vishwanth-Talluri/demo.git'
+            }
+        }
+
+        stage('Build Maven Project') {
+            steps {
+                sh 'mvn clean package -DskipTests'
+            }
+        }
+        stage('Docker Build') {
+    steps {
+        sh 'docker build -t vishwanthtalluri/demo-app .'
+    }
+}
+
+
+        stage('Docker Run') {
+            steps {
+                // Stop previous container if exists
+                sh 'docker rm -f demo-app || true'
+                
+                // Start new container
+                sh 'docker run -d --name demo-app -p 8080:8080 $DOCKER_IMAGE'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "Pipeline completed."
+        }
+    }
+}
