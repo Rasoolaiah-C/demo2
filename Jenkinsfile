@@ -3,179 +3,43 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "RasoolaiahC/demo-app"
-        DOCKER_REGISTRY = "docker.io"
-        KUBE_NAMESPACE = "default"
-        GIT_REPO = "https://github.com/Rasoolaiah-C/demo2.git"
-        ARTIFACT_ID = "demo"
-        VERSION = "0.0.1-SNAPSHOT"
-    }
-
-    options {
-        timestamps()
-        timeout(time: 1, unit: 'HOURS')
-        buildDiscarder(logRotator(numToKeepStr: '10'))
     }
 
     stages {
 
         stage('Checkout Code') {
             steps {
-                echo "====== Checking out code from GitHub ======"
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: 'main']],
-                    userRemoteConfigs: [[url: env.GIT_REPO]]
-                ])
-                echo "Code checked out successfully"
+                git branch: 'main',
+                    url: 'https://github.com/Rasoolaiah-C/demo2.git'
             }
         }
 
         stage('Build Maven Project') {
             steps {
-                echo "====== Building Maven Project ======"
-                sh '''
-                    echo "Maven version:"
-                    mvn --version
-                    echo "Building project..."
-                    mvn clean package -DskipTests
-                '''
-                echo "Build completed successfully"
+                sh 'mvn clean package -DskipTests'
             }
         }
-
-        stage('Unit Tests') {
-            steps {
-                echo "====== Running Unit Tests ======"
-                sh '''
-                    mvn test
-                '''
-                junit '**/target/surefire-reports/*.xml'
-            }
-        }
-
-        stage('Code Quality Analysis') {
-            steps {
-                echo "====== Running Code Quality Checks ======"
-                sh '''
-                    mvn checkstyle:check || true
-                '''
-            }
-        }
-
         stage('Docker Build') {
-            steps {
-                echo "====== Building Docker Image ======"
-                sh '''
-                    echo "Building Docker image: ${DOCKER_IMAGE}"
-                    docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} .
-                    docker tag ${DOCKER_IMAGE}:${BUILD_NUMBER} ${DOCKER_IMAGE}:latest
-                    echo "Docker image built successfully"
-                '''
-            }
-        }
+    steps {
+        sh 'docker build -t RasoolaiahC/demo-app .'
+    }
+}
 
-        stage('Docker Push') {
-            steps {
-                echo "====== Pushing Docker Image to Registry ======"
-                sh '''
-                    echo "Logging in to Docker Registry..."
-                    echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-                    echo "Pushing image: ${DOCKER_IMAGE}:${BUILD_NUMBER}"
-                    docker push ${DOCKER_IMAGE}:${BUILD_NUMBER}
-                    docker push ${DOCKER_IMAGE}:latest
-                    docker logout
-                    echo "Docker image pushed successfully"
-                '''
-            }
-        }
 
-        stage('Deploy to Kubernetes') {
+        stage('Docker Run') {
             steps {
-                echo "====== Deploying to Kubernetes ======"
-                sh '''
-                    echo "Applying Kubernetes configurations..."
-                    kubectl apply -f k8s/deployment.yaml
-                    kubectl apply -f k8s/service.yaml
-                    echo "Waiting for deployment to be ready..."
-                    kubectl rollout status deployment/demo-app -n ${KUBE_NAMESPACE} --timeout=5m
-                    echo "Kubernetes deployment completed successfully"
-                '''
-            }
-        }
-
-        stage('Health Check') {
-            steps {
-                echo "====== Performing Health Check ======"
-                sh '''
-                    echo "Waiting for service to be accessible..."
-                    sleep 10
-                    SERVICE_IP=$(kubectl get service demo-app-service -n ${KUBE_NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].ip}' || echo 'localhost')
-                    NODE_PORT=$(kubectl get service demo-app-service -n ${KUBE_NAMESPACE} -o jsonpath='{.spec.ports[0].nodePort}')
-                    echo "Service IP: $SERVICE_IP, Node Port: $NODE_PORT"
-                    
-                    # Try to health check
-                    if command -v curl &> /dev/null; then
-                        curl -f http://localhost:30081/api/v1/experiments/health || true
-                    else
-                        echo "curl not available, skipping health check"
-                    fi
-                '''
-            }
-        }
-
-        stage('Local Docker Run - Testing') {
-            steps {
-                echo "====== Testing Docker Container Locally ======"
-                sh '''
-                    echo "Stopping any existing demo-app container..."
-                    docker rm -f demo-app-test || true
-                    
-                    echo "Running Docker container for testing..."
-                    docker run -d --name demo-app-test -p 8082:8081 ${DOCKER_IMAGE}:latest
-                    
-                    echo "Waiting for container to start..."
-                    sleep 10
-                    
-                    echo "Testing API endpoint..."
-                    if command -v curl &> /dev/null; then
-                        curl -f http://localhost:8082/api/v1/experiments/health || true
-                    fi
-                    
-                    echo "Stopping test container..."
-                    docker rm -f demo-app-test || true
-                '''
+                // Stop previous container if exists
+                sh 'docker rm -f demo-app || true'
+                
+                // Start new container
+                sh 'docker run -d --name demo-app -p 8081:8081 $DOCKER_IMAGE'
             }
         }
     }
 
     post {
-        success {
-            echo "====== Pipeline Succeeded ======"
-            echo "Build Number: ${BUILD_NUMBER}"
-            echo "Docker Image: ${DOCKER_IMAGE}:${BUILD_NUMBER}"
-            emailext(
-                subject: "Jenkins Pipeline Success - ${env.JOB_NAME}",
-                body: "Pipeline succeeded for build #${BUILD_NUMBER}",
-                to: "${BUILD_USER_EMAIL}",
-                mimeType: 'text/html'
-            )
-        }
-
-        failure {
-            echo "====== Pipeline Failed ======"
-            emailext(
-                subject: "Jenkins Pipeline Failed - ${env.JOB_NAME}",
-                body: "Pipeline failed for build #${BUILD_NUMBER}. Check logs for details.",
-                to: "${BUILD_USER_EMAIL}",
-                mimeType: 'text/html'
-            )
-        }
-
         always {
-            echo "====== Pipeline Cleanup ======"
-            cleanWs()
-            sh 'docker logout || true'
+            echo "Pipeline completed."
         }
     }
 }
-
