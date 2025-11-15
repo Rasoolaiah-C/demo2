@@ -1,0 +1,320 @@
+{
+  "info": {
+    "name": "Experiment Data API",
+    "description": "RESTful API for managing experiment data",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Experiments",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/v1/experiments/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "experiments", "health"]
+            },
+            "description": "Check API health status"
+          }
+        },
+        {
+          "name": "Get All Experiments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8081/api/v1/experiments",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "experiments"]
+            },
+            "description": "Retrieve all experiments"
+          }
+        },
+        {
+          "name": "Get Experiment by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8081/api/v1/experiments/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "experiments", "1"]
+            },
+            "description": "Retrieve a specific experiment by ID"
+          }
+        },
+        {
+          "name": "Create New Experiment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Quantum Computing Experiment\",\n  \"description\": \"Testing quantum algorithms for optimization\",\n  \"status\": \"ACTIVE\",\n  \"researcherName\": \"Dr. John Doe\",\n  \"experimentType\": \"Quantum Computing\",\n  \"durationHours\": 48\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/v1/experiments",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "experiments"]
+            },
+            "description": "Create a new experiment"
+          }
+        },
+        {
+          "name": "Update Experiment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Quantum Computing Experiment\",\n  \"description\": \"Testing quantum algorithms for optimization - Updated\",\n  \"status\": \"IN_PROGRESS\",\n  \"researcherName\": \"Dr. John Doe\",\n  \"experimentType\": \"Quantum Computing\",\n  \"durationHours\": 72\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/v1/experiments/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "experiments", "1"]
+            },
+            "description": "Update an existing experiment"
+          }
+        },
+        {
+          "name": "Delete Experiment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8081/api/v1/experiments/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "experiments", "1"]
+            },
+            "description": "Delete an experiment"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Filters and Queries",
+      "item": [
+        {
+          "name": "Get Experiments by Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8081/api/v1/experiments/status/ACTIVE",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "experiments", "status", "ACTIVE"]
+            },
+            "description": "Filter experiments by status"
+          }
+        },
+        {
+          "name": "Get Experiments by Researcher",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8081/api/v1/experiments/researcher/Dr.%20John%20Doe",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "experiments", "researcher", "Dr. John Doe"]
+            },
+            "description": "Filter experiments by researcher name"
+          }
+        },
+        {
+          "name": "Search Experiments by Name",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8081/api/v1/experiments/search/Quantum",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "experiments", "search", "Quantum"]
+            },
+            "description": "Search experiments by name"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sample Workflow",
+      "item": [
+        {
+          "name": "1. Create Experiment 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Machine Learning Experiment\",\n  \"description\": \"Training deep neural networks on CIFAR-10 dataset\",\n  \"status\": \"PENDING\",\n  \"researcherName\": \"Dr. Jane Smith\",\n  \"experimentType\": \"Machine Learning\",\n  \"durationHours\": 24\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/v1/experiments",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "experiments"]
+            }
+          }
+        },
+        {
+          "name": "2. Create Experiment 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Bioinformatics Analysis\",\n  \"description\": \"Sequence alignment and protein structure prediction\",\n  \"status\": \"ACTIVE\",\n  \"researcherName\": \"Dr. Jane Smith\",\n  \"experimentType\": \"Bioinformatics\",\n  \"durationHours\": 36\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/v1/experiments",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "experiments"]
+            }
+          }
+        },
+        {
+          "name": "3. List All Experiments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8081/api/v1/experiments",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "experiments"]
+            }
+          }
+        },
+        {
+          "name": "4. Get Experiments by Status ACTIVE",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8081/api/v1/experiments/status/ACTIVE",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "experiments", "status", "ACTIVE"]
+            }
+          }
+        },
+        {
+          "name": "5. Filter by Researcher",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8081/api/v1/experiments/researcher/Dr.%20Jane%20Smith",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "experiments", "researcher", "Dr. Jane Smith"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8081"
+    },
+    {
+      "key": "experimentId",
+      "value": ""
+    }
+  ]
+}
